@@ -19,7 +19,8 @@ public class PackageCreation {
     // TODO Auto-generated method stub
 
     System.out.println("Preparing session");
-    serverSession = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
+    //    serverSession = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
+    serverSession = SessionManager.getSessionWithDetails("JWASZ104", "MicroStrategy Tutorial", "Administrator", "");
 
     // the factory is tied to our session
     factory = serverSession.getFactory();
@@ -29,12 +30,13 @@ public class PackageCreation {
     createPackageWithReport();
   }
 
+
   /*
    * KB263411 - create an object manager package with a specific object
    * https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/web/objects/WebSourceManipulator.html#createObjectDeltaPackage(java.lang.String,%20int,%20int,%20int,%20int)
    */
   public static void createPackageWithReport(){
-    //ID of report 
+    //ID of report
     String objectID = "0BA6017811D5EFDF100080B3A5E8F8A4";
 
     // Type of object we're sending in
@@ -45,21 +47,47 @@ public class PackageCreation {
     // Part(s) of object being handled for conflicts
     int conflictObjectParts = EnumDSSXMLObjectFlags.DssXmlObjectDefn;
     // What do we do if there is a conflict with the file(s)
-    int conflictResolutionRule = EnumDSSXMLConflictResolution.DssXmlConflictExisting;
+    int objectConflictResolutionRule = EnumDSSXMLConflictResolution.DssXmlConflictExisting;
 
     // What to do if there is a conflict with the file(s) ACLs
     int aclConflictResolutionRule = EnumDSSXMLConflictResolution.DssXmlConflictReplace;
-    WebSourceManipulator manipulator = source.getSourceManipulator(); 
+
+    // Create the package in memory
+    createSingleObjectPackageWithOptions(
+      objectID,
+      objectType,
+      conflictDomain,
+      conflictObjectParts,
+      objectConflictResolutionRule,
+      aclConflictResolutionRule,
+      "reportPackage"
+    );
+  }
+  
+
+  /*
+   * Convenience wrapper for calling the function to create a package with one object, with object ID.
+   */
+  private static void createSingleObjectPackageWithOptions(
+      String objectID,
+      int objectType,
+      int conflictDomain,
+      int conflictObjectParts,
+      int objectConflictResolutionRule,
+      int aclConflictResolutionRule,
+      String fileName
+      ) {
+    WebSourceManipulator manipulator = source.getSourceManipulator();
     manipulator.setACLConflictRule(aclConflictResolutionRule);
 
     // Create the package in memory
     byte[] objectPackage = null;
     try {
-      objectPackage = manipulator.createObjectDeltaPackage(objectID, 
-          objectType,
-          conflictDomain, 
-          conflictObjectParts, 
-          conflictResolutionRule);
+      objectPackage = manipulator.createObjectDeltaPackage(objectID,
+        objectType,
+        conflictDomain,
+        conflictObjectParts,
+        objectConflictResolutionRule);
     } catch (IllegalArgumentException | WebObjectsException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -67,11 +95,11 @@ public class PackageCreation {
     }
 
     // Save the package to a file
-    BufferedOutputStream bos = null; 
+    BufferedOutputStream bos = null;
     FileOutputStream fos = null;
     try {
-      fos = new FileOutputStream(new File(localFolderPath + "reportPackage.mmp"));
-      bos = new BufferedOutputStream(fos); 
+      fos = new FileOutputStream(new File(localFolderPath + fileName + ".mmp"));
+      bos = new BufferedOutputStream(fos);
       bos.write(objectPackage);
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -87,7 +115,6 @@ public class PackageCreation {
     }
 
     System.out.println("package should be ready");
-
   }
 
 }

@@ -13,27 +13,33 @@ public class PackageCreation {
   public static WebObjectsFactory factory = null;
   public static WebObjectSource source = null;
 
+  // Hardcoded path where packages are saved
   private static String localFolderPath = "/Users/tsiebler/Documents/EclipseCodeSavedFiles/";
 
   public static void main(String[] args) {
     System.out.println("Preparing session");
-    serverSession = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
-
-    // the factory is tied to our session
-    factory = serverSession.getFactory();
-    source = factory.getObjectSource();
+    WebIServerSession session = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
+    setupWithSession(session);
 
     System.out.println("Creating package");
     createSingleObjectPackageWithReport();
   }
-
+  
+  public static void setupWithSession(WebIServerSession session) {
+    // store session
+    serverSession = session;
+    
+    // the factory is tied to our session
+    factory = serverSession.getFactory();
+    source = factory.getObjectSource();
+  }
 
   /*
    * KB263411 - create an object manager package with a specific object
    * https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/web/objects/WebSourceManipulator.html#createObjectDeltaPackage(java.lang.String,%20int,%20int,%20int,%20int)
    * Conflict rules are on the package level, not per object.
    */
-  public static void createSingleObjectPackageWithReport(){
+  public static byte[] createSingleObjectPackageWithReport(){
     //ID of report
     String objectID = "0BA6017811D5EFDF100080B3A5E8F8A4";
 
@@ -66,7 +72,7 @@ public class PackageCreation {
       // TODO Auto-generated catch block
       System.out.println("Package creation failed due to exception");
       e.printStackTrace();
-      return;
+      return objectPackage;
     }
     
     // Save the package to a file
@@ -76,6 +82,7 @@ public class PackageCreation {
     saveByteArrayToFile(objectPackage, pathToFile);
 
     System.out.println("Saved package to: " + pathToFile);
+    return objectPackage;
   }
   
   /*
@@ -192,7 +199,7 @@ public class PackageCreation {
   /*
    * Wrapper for creating a object manager package and returning the result in memory as a byte array. Takes objects and delta rules per object.
    */
-  private static byte[] createMultiObjectPackageWithOptions(
+  public static byte[] createMultiObjectPackageWithOptions(
       WebObjectInfo[] objects,
       ObjectDeltaFlags[] objDeltaFlags,
       int aclConflictResolutionRule
@@ -208,7 +215,7 @@ public class PackageCreation {
   /*
    * Similar to createMultiObjectPackageWithOptions above, but with shared conflict rules for all objects in the array
    */
-  private static byte[] createMultiObjectPackageWithOptions(
+  public static byte[] createMultiObjectPackageWithOptions(
     WebObjectInfo[] objects,
     int conflictDomain,
     int conflictObjectParts,
@@ -231,7 +238,7 @@ public class PackageCreation {
   /*
    * Convenience wrapper for calling the function to create a package with one object, with object ID.
    */
-  private static byte[] createSingleObjectPackageWithOptions(
+  public static byte[] createSingleObjectPackageWithOptions(
       String objectID,
       int objectType,
       int conflictDomain,
@@ -256,7 +263,7 @@ public class PackageCreation {
   /*
    * Helper function to save an in-memory object to file
    */
-  private static void saveByteArrayToFile(byte[] byteArray, String targetFilePath) {
+  public static void saveByteArrayToFile(byte[] byteArray, String targetFilePath) {
     BufferedOutputStream bos = null;
     FileOutputStream fos = null;
     try {

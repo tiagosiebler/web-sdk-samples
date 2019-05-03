@@ -13,27 +13,33 @@ public class PackageCreation {
   public static WebObjectsFactory factory = null;
   public static WebObjectSource source = null;
 
+  // Hardcoded path where packages are saved
   private static String localFolderPath = "/Users/tsiebler/Documents/EclipseCodeSavedFiles/";
 
   public static void main(String[] args) {
     System.out.println("Preparing session");
-    serverSession = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
-
-    // the factory is tied to our session
-    factory = serverSession.getFactory();
-    source = factory.getObjectSource();
+    WebIServerSession session = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
+    setupWithSession(session);
 
     System.out.println("Creating package");
     createSingleObjectPackageWithReport();
   }
-
+  
+  public static void setupWithSession(WebIServerSession session) {
+    // store session
+    serverSession = session;
+    
+    // the factory is tied to our session
+    factory = serverSession.getFactory();
+    source = factory.getObjectSource();
+  }
 
   /*
    * KB263411 - create an object manager package with a specific object
    * https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/web/objects/WebSourceManipulator.html#createObjectDeltaPackage(java.lang.String,%20int,%20int,%20int,%20int)
    * Conflict rules are on the package level, not per object.
    */
-  public static void createSingleObjectPackageWithReport(){
+  public static byte[] createSingleObjectPackageWithReport(){
     //ID of report
     String objectID = "0BA6017811D5EFDF100080B3A5E8F8A4";
 
@@ -50,16 +56,33 @@ public class PackageCreation {
     // What to do if there is a conflict with the file(s) ACLs
     int aclConflictResolutionRule = EnumDSSXMLConflictResolution.DssXmlConflictReplace;
 
+    byte[] objectPackage = null;
+    
     // Create the package in memory
-    createSingleObjectPackageWithOptions(
-      objectID,
-      objectType,
-      conflictDomain,
-      conflictObjectParts,
-      objectConflictResolutionRule,
-      aclConflictResolutionRule,
-      "reportPackage"
-    );
+    try {
+      objectPackage = createSingleObjectPackageWithOptions(
+        objectID,
+        objectType,
+        conflictDomain,
+        conflictObjectParts,
+        objectConflictResolutionRule,
+        aclConflictResolutionRule
+      );
+    } catch (IllegalArgumentException | WebObjectsException e) {
+      // TODO Auto-generated catch block
+      System.out.println("Package creation failed due to exception");
+      e.printStackTrace();
+      return objectPackage;
+    }
+    
+    // Save the package to a file
+    String fileName = "reportPackage";
+    String pathToFile = localFolderPath + fileName + ".mmp";
+
+    saveByteArrayToFile(objectPackage, pathToFile);
+
+    System.out.println("Saved package to: " + pathToFile);
+    return objectPackage;
   }
   
   /*
@@ -95,13 +118,29 @@ public class PackageCreation {
     // these are the merge rules per object in the above array 
     ObjectDeltaFlags[] mergeFlagsArray = new ObjectDeltaFlags[]{objectMergeRules};
     
+    byte[] objectPackage = null;
+    
     // Create the package in memory
-    createMultiObjectPackageWithOptions(
-      packageObjectsArray,
-      mergeFlagsArray,
-      aclConflictResolutionRule,
-      "multiObjectPackage"
-    );
+    try {
+      objectPackage = createMultiObjectPackageWithOptions(
+        packageObjectsArray,
+        mergeFlagsArray,
+        aclConflictResolutionRule
+      );
+    } catch (IllegalArgumentException | WebObjectsException e) {
+      // TODO Auto-generated catch block
+      System.out.println("Package creation failed due to exception");
+      e.printStackTrace();
+      return;
+    }
+
+    // Save the package to a file
+    String fileName = "multiObjectPackage";
+    String pathToFile = localFolderPath + fileName + ".mmp";
+    
+    saveByteArrayToFile(objectPackage, pathToFile);
+
+    System.out.println("Saved package to: " + pathToFile);
   }
   
   /*
@@ -131,116 +170,100 @@ public class PackageCreation {
     // array of objects we want in the package
     WebObjectInfo[] packageObjectsArray = new WebObjectInfo[] {objectDefinition};
 
+    
     // Create the package in memory
-    createMultiObjectPackageWithOptions(
-      packageObjectsArray,
-      conflictDomain,
-      conflictObjectParts,
-      objectConflictResolutionRule,
-      aclConflictResolutionRule,
-      "multiObjectPackage"
-    );
+    byte[] objectPackage = null;
+    try {
+      objectPackage = createMultiObjectPackageWithOptions(
+        packageObjectsArray,
+        conflictDomain,
+        conflictObjectParts,
+        objectConflictResolutionRule,
+        aclConflictResolutionRule
+      );
+    } catch (IllegalArgumentException | WebObjectsException e) {
+      // TODO Auto-generated catch block
+      System.out.println("Package creation failed due to exception");
+      e.printStackTrace();
+      return;
+    }
+    
+    // Save the package to a file
+    String fileName = "multiObjectPackage";
+    String pathToFile = localFolderPath + fileName + ".mmp";
+    saveByteArrayToFile(objectPackage, pathToFile);
+
+    System.out.println("Saved package to: " + pathToFile);
   }
   
   /*
-   * Wrapper for creating a object manager package and saving the result to file. Takes objects and delta rules per object.
+   * Wrapper for creating a object manager package and returning the result in memory as a byte array. Takes objects and delta rules per object.
    */
-  private static void createMultiObjectPackageWithOptions(
+  public static byte[] createMultiObjectPackageWithOptions(
       WebObjectInfo[] objects,
       ObjectDeltaFlags[] objDeltaFlags,
-      int aclConflictResolutionRule,
-      String fileName
-  ) {
+      int aclConflictResolutionRule
+  ) throws IllegalArgumentException, WebObjectsException {
+    
     WebSourceManipulator manipulator = source.getSourceManipulator();
     manipulator.setACLConflictRule(aclConflictResolutionRule);
 
     // Create the package in memory
-    byte[] objectPackage = null;
-    try {
-      objectPackage = manipulator.createObjectDeltaPackage(objects, objDeltaFlags);
-    } catch (IllegalArgumentException | WebObjectsException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      return;
-    }
-
-    // Save the package to a file
-    String pathToFile = localFolderPath + fileName + ".mmp";
-    saveByteArrayToFile(objectPackage, pathToFile);
-
-    System.out.println("package should be ready");
+    return manipulator.createObjectDeltaPackage(objects, objDeltaFlags);
   }
   
   /*
    * Similar to createMultiObjectPackageWithOptions above, but with shared conflict rules for all objects in the array
    */
-  private static void createMultiObjectPackageWithOptions(
+  public static byte[] createMultiObjectPackageWithOptions(
     WebObjectInfo[] objects,
     int conflictDomain,
     int conflictObjectParts,
     int objectConflictResolutionRule,
-    int aclConflictResolutionRule,
-    String fileName
-  ) {
+    int aclConflictResolutionRule
+  ) throws IllegalArgumentException, WebObjectsException {
+    
     WebSourceManipulator manipulator = source.getSourceManipulator();
     manipulator.setACLConflictRule(aclConflictResolutionRule);
     
     // Create the package in memory
-    byte[] objectPackage = null;
-    try {
-      objectPackage = manipulator.createObjectDeltaPackage(objects, conflictDomain, conflictObjectParts, objectConflictResolutionRule);
-    } catch (IllegalArgumentException | WebObjectsException e) {
-      e.printStackTrace();
-      return;
-    }
-    
-    // Save the package to a file
-    String pathToFile = localFolderPath + fileName + ".mmp";
-    saveByteArrayToFile(objectPackage, pathToFile);
-    
-    System.out.println("package should be ready");
+    return manipulator.createObjectDeltaPackage(
+      objects, 
+      conflictDomain, 
+      conflictObjectParts, 
+      objectConflictResolutionRule
+    );
   }
   
   /*
    * Convenience wrapper for calling the function to create a package with one object, with object ID.
    */
-  private static void createSingleObjectPackageWithOptions(
+  public static byte[] createSingleObjectPackageWithOptions(
       String objectID,
       int objectType,
       int conflictDomain,
       int conflictObjectParts,
       int objectConflictResolutionRule,
-      int aclConflictResolutionRule,
-      String fileName
-  ) {
+      int aclConflictResolutionRule
+  ) throws IllegalArgumentException, WebObjectsException {
+    
     WebSourceManipulator manipulator = source.getSourceManipulator();
     manipulator.setACLConflictRule(aclConflictResolutionRule);
 
     // Create the package in memory
-    byte[] objectPackage = null;
-    try {
-      objectPackage = manipulator.createObjectDeltaPackage(objectID,
-        objectType,
-        conflictDomain,
-        conflictObjectParts,
-        objectConflictResolutionRule);
-    } catch (IllegalArgumentException | WebObjectsException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      return;
-    }
-
-    // Save the package to a file
-    String pathToFile = localFolderPath + fileName + ".mmp";
-    saveByteArrayToFile(objectPackage, pathToFile);
-
-    System.out.println("package should be ready");
+    return manipulator.createObjectDeltaPackage(
+      objectID,
+      objectType,
+      conflictDomain,
+      conflictObjectParts,
+      objectConflictResolutionRule
+    );
   }
   
   /*
    * Helper function to save an in-memory object to file
    */
-  private static void saveByteArrayToFile(byte[] byteArray, String targetFilePath) {
+  public static void saveByteArrayToFile(byte[] byteArray, String targetFilePath) {
     BufferedOutputStream bos = null;
     FileOutputStream fos = null;
     try {

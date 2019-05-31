@@ -21,14 +21,17 @@ public class ExportPDF {
     WebIServerSession session = SessionManager.getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
     
     String reportID = "F76698D44CC957971487B5A2E82956DF";
+    String pathToSavePDF = "/Users/tsiebler/Documents/EclipseCodeSavedFiles/reportOrientationExport.pdf";
+    
     try {
       System.out.println("Starting export workflow");
       // run the export workflow
       byte[] exportResults = exportReportToPDF(reportID, session);
+      
       System.out.println("Saving export to file");
 
       // save the results to file
-      FileOutputStream fos = new FileOutputStream("/Users/tsiebler/Documents/EclipseCodeSavedFiles/reportOrientationExport.pdf");
+      FileOutputStream fos = new FileOutputStream(pathToSavePDF);
       fos.write(exportResults);
       fos.close();
       
@@ -54,13 +57,23 @@ public class ExportPDF {
     rb.setExecutionMode(EnumWebReportExecutionModes.REPORT_MODE_PDF);
     
     /*
-     * Set PDF orientation settings on the report instance, prior to the export itself
+     * A change in orientation requires a change in PDF paper height and width
+     */
+    rb.getReportInstance().setProperty(EnumDSSXMLReportObjects.DssXmlReportObjectMainTemplate, OptionsHelper.PDFPropertySetName, OptionsHelper.PaperHeight, "8");
+    rb.getReportInstance().setProperty(EnumDSSXMLReportObjects.DssXmlReportObjectMainTemplate, OptionsHelper.PDFPropertySetName, OptionsHelper.PaperWidth, "11.5");
+
+    /*
+     * Set PDF orientation settings on the report instance
      */
     rb.getReportInstance().setProperty(EnumDSSXMLReportObjects.DssXmlReportObjectMainTemplate, OptionsHelper.PDFPropertySetName, OptionsHelper.Orientation, "" + EnumRWExportOrientation.RW_EXPORT_ORIENTATION_LANDSCAPE);
+    
+    /*
+     * Specify that PDF settings are present in this workflow
+     */
     rb.getReportInstance().setProperty(EnumDSSXMLReportObjects.DssXmlReportObjectMainTemplate, OptionsHelper.PDFPropertySetName, OptionsHelper.ReportPDFSettingsPresent,"1");
 
     /*
-     * These changes need to be applied, after being set on the report, else they won't be used in the execution
+     * Lastly, these changes need to be applied, after being set on the report, else they won't be used in the execution
      */
     rb.setApplyChangesOnCollectData(true); // Indicate we have changes to apply
     rb.collectData(); // Trigger report apply changes and then execution

@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import com.microstrategy.samples.sessions.SessionManager;
+import com.microstrategy.samples.util.FileHelper;
 import com.microstrategy.web.objects.WebIServerSession;
 import com.microstrategy.web.objects.WebObjectsException;
 import com.microstrategy.web.objects.WebSourceManipulator;
 import com.microstrategy.webapi.EnumDSSXMLConflictResolution;
-
 
 public class UndoPackage {
   private static String localFolderPath = "/Users/tsiebler/Documents/EclipseCodeSavedFiles/";
@@ -52,9 +52,8 @@ public class UndoPackage {
     
     // save the undo package to file
     String pathToFile = localFolderPath + fileName + ".mmp";
-    PackageCreation.saveByteArrayToFile(undoPackage, pathToFile);
-
     System.out.println("Saved undo package to: " + pathToFile);
+    FileHelper.saveByteArrayToFile(undoPackage, pathToFile);
   }
   
 

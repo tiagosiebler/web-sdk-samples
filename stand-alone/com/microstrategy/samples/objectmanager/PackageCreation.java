@@ -1,11 +1,10 @@
 package com.microstrategy.samples.objectmanager;
 
-import java.io.*;
-
 import com.microstrategy.web.objects.*;
 import com.microstrategy.webapi.*;
 
 import com.microstrategy.samples.sessions.SessionManager;
+import com.microstrategy.samples.util.FileHelper;
 
 public class PackageCreation {
 
@@ -79,7 +78,7 @@ public class PackageCreation {
     String fileName = "reportPackage";
     String pathToFile = localFolderPath + fileName + ".mmp";
 
-    saveByteArrayToFile(objectPackage, pathToFile);
+    FileHelper.saveByteArrayToFile(objectPackage, pathToFile);
 
     System.out.println("Saved package to: " + pathToFile);
     return objectPackage;
@@ -138,7 +137,7 @@ public class PackageCreation {
     String fileName = "multiObjectPackage";
     String pathToFile = localFolderPath + fileName + ".mmp";
     
-    saveByteArrayToFile(objectPackage, pathToFile);
+    FileHelper.saveByteArrayToFile(objectPackage, pathToFile);
 
     System.out.println("Saved package to: " + pathToFile);
   }
@@ -191,7 +190,7 @@ public class PackageCreation {
     // Save the package to a file
     String fileName = "multiObjectPackage";
     String pathToFile = localFolderPath + fileName + ".mmp";
-    saveByteArrayToFile(objectPackage, pathToFile);
+    FileHelper.saveByteArrayToFile(objectPackage, pathToFile);
 
     System.out.println("Saved package to: " + pathToFile);
   }
@@ -258,30 +257,6 @@ public class PackageCreation {
       conflictObjectParts,
       objectConflictResolutionRule
     );
-  }
-  
-  /*
-   * Helper function to save an in-memory object to file
-   */
-  public static void saveByteArrayToFile(byte[] byteArray, String targetFilePath) {
-    BufferedOutputStream bos = null;
-    FileOutputStream fos = null;
-    try {
-      fos = new FileOutputStream(new File(targetFilePath));
-      bos = new BufferedOutputStream(fos);
-      bos.write(byteArray);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-
-    } finally {
-      try {
-        bos.close();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
   }
 
 }

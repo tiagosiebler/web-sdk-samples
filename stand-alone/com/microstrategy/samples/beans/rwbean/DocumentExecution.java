@@ -102,15 +102,16 @@ public class DocumentExecution {
     }
     
     if (griddef == null) return rwInstance.getPDFData();
-    
-    // Just use the last grid/graph element that we found, in the next test
-    RWManipulation rwm = rwInstance.getRWManipulator();
-    
+ 
     //Valid formulas include those than can be used to Create Derived Metrics within MicroStrategy Web / Developer
     String formula = "Avg(Profit)";
     int position = 0;
     String objectAlias = "My Derived Metric";
     
+    
+    RWManipulation rwm = rwInstance.getRWManipulator();
+    
+    // Just use the last grid/graph element key that we found looping through the RWGridGraphDef griddef
     rwm.addDerivedMetricToTemplate(griddef.getKey(), formula, position, objectAlias);
     //(String key, String formula, int position, String name)
     // https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/web/objects/rw/RWManipulation.html#addDerivedMetricToTemplate(java.lang.String,%20java.lang.String,%20int,%20java.lang.String)

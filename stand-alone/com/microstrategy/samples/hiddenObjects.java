@@ -1,6 +1,6 @@
 /* FOREWORD:
 
-The code enables searching through a search directory for folders that can either be either visible-only or hidden.
+The code enables searching through a search directory for folders that can either be visible-only or hidden.
 The change is only a matter of commenting out the object flag on search: EnumDSSXMLObjectFlags.DssXmlObjectFindHidden
 If ObjectFindHidden is on - it find all files (including the hidden ones) If the flag is not there - only visible
 folders will be returned. Later it also lists the folders with all the details. 

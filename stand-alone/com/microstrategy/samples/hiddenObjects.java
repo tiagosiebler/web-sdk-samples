@@ -6,7 +6,7 @@ If ObjectFindHidden is on - it find all files (including the hidden ones) If the
 folders will be returned. Later it also lists the folders with all the details. 
 
 You can also use it for searching for other types of files (apart from folders) by changing the flag on searchTypes: 
-search.types().add(EnumDSSXMLObjectTypes.DssXmlTypeFolder. 
+search.types().add(EnumDSSXMLObjectTypes.DssXmlTypeFolder). 
 
 The information that you have to fill in is: 
 1. The package

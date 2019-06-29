@@ -35,7 +35,7 @@ import com.microstrategy.webapi.EnumDSSXMLSearchFlags;
 
 public class FirstClass {
 
-private static WebObjectsFactory factory = WebObjectsFactory.getInstance();;	
+private static WebObjectsFactory factory = WebObjectsFactory.getInstance();	
 private static WebIServerSession serverSession = null;
 
 public static void main(String[] args) throws WebObjectsException{ 

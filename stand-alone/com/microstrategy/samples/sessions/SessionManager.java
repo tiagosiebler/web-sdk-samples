@@ -16,7 +16,7 @@ public class SessionManager {
   public static void main(String[] args) {
     WebIServerSession mySession = getSessionWithDetails("APS-TSIEBLER-VM", "MicroStrategy Tutorial", "Administrator", "");
   }
-  
+
   // this is a basic session tied to a project
   public static WebIServerSession getSession() {
     return getSessionWithDetails(DEFAULT_SERVER, DEFAULT_PROJECT, DEFAULT_USERNAME, DEFAULT_PASSWORD);
@@ -31,7 +31,7 @@ public class SessionManager {
   public static void closeSession() {
     closeSession(serverSession);
   }
-  
+
   // close the session passed as a parameter
   public static void closeSession(WebIServerSession serverSession) {
     if (!serverSession.isActive()){
@@ -51,27 +51,25 @@ public class SessionManager {
   }
 
   public static WebIServerSession getSessionWithDetails(String serverName,String projectName, String login, String password, int port){
-    if (serverSession == null) {
-      //create factory object
-      factory = WebObjectsFactory.getInstance();
-      serverSession = factory.getIServerSession();
-      //Set up session properties
-      serverSession.setServerName(serverName); //Should be replaced with the name of an Intelligence Server // aps-tsiebler-vm
+    //create factory object
+    factory = WebObjectsFactory.getInstance();
+    serverSession = factory.getIServerSession();
+    //Set up session properties
+    serverSession.setServerName(serverName); //Should be replaced with the name of an Intelligence Server // aps-tsiebler-vm
 
-      if (port != 0) serverSession.setServerPort(port);
-      if(projectName != null) serverSession.setProjectName(projectName); //Project where the session should be created
+    if (port != 0) serverSession.setServerPort(port);
+    if(projectName != null) serverSession.setProjectName(projectName); //Project where the session should be created
 
-      serverSession.setLogin(login); //User ID
-      serverSession.setPassword(password); //Password
+    serverSession.setLogin(login); //User ID
+    serverSession.setPassword(password); //Password
 
-      serverSession.setApplicationType(EnumDSSXMLApplicationType.DssXmlApplicationCustomApp);
+    serverSession.setApplicationType(EnumDSSXMLApplicationType.DssXmlApplicationCustomApp);
 
-      //Initialize the session with the above parameters
-      try {
-        System.out.println("_getSessionWithDetails - Session created with ID: " + serverSession.getSessionID());
-      } catch (WebObjectsException ex) {
-        System.out.println("_getSessionWithDetails - Error creating session:" + ex.getMessage());
-      }
+    //Initialize the session with the above parameters
+    try {
+      System.out.println("_getSessionWithDetails - Session created with ID: " + serverSession.getSessionID());
+    } catch (WebObjectsException ex) {
+      System.out.println("_getSessionWithDetails - Error creating session:" + ex.getMessage());
     }
     return serverSession;
   }
@@ -94,7 +92,7 @@ public class SessionManager {
       e1.printStackTrace();
     }
   }
-  
+
   /*
    * Similar to the regular working set, but specific to WebSearch executions. This caps how many WebSearch instances can run in parallel, before we lose track of ongoing executions.
    * Overflows are also manifested as "history list message not found" errors.

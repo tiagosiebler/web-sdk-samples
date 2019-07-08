@@ -54,11 +54,18 @@ public class SessionManager {
     //create factory object
     factory = WebObjectsFactory.getInstance();
     serverSession = factory.getIServerSession();
+    
     //Set up session properties
     serverSession.setServerName(serverName); //Should be replaced with the name of an Intelligence Server // aps-tsiebler-vm
 
-    if (port != 0) serverSession.setServerPort(port);
-    if(projectName != null) serverSession.setProjectName(projectName); //Project where the session should be created
+    if (port != 0) {
+      serverSession.setServerPort(port);
+    }
+    
+    if(projectName != null) {
+      //Project where the session should be created
+      serverSession.setProjectName(projectName);
+    }
 
     serverSession.setLogin(login); //User ID
     serverSession.setPassword(password); //Password

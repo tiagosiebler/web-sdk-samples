@@ -119,5 +119,11 @@ public class DocumentExecution {
     rwInstance.pollStatus(); 
     return rwInstance.getPDFData();
   }
+  
+  public static RWBean saveEmbeddedImagesToFile(String pathString) {
+	  RWBean rwb = null;
+	  
+	  return rwb;
+  }
 
 }

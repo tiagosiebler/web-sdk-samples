@@ -37,7 +37,10 @@ public class RetrieveDocumentImages {
 
 	    //Array with the images objects.
 	    ArrayList<WebBlob> imagesArrayList = getEmbeddedImagesFromDocument(documentID, session);
-	    
+	    //TODO:
+	    //Code a function to retrieve any type of object from a document.
+	    //- Add 3rd parameter to getEmbeddedImagesFromDocument to filter by object type.
+	    //INclude object type with: EnumDSSXMLObjectTypes
 
 	}
 	

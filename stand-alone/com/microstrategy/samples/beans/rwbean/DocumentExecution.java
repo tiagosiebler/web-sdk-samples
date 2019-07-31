@@ -121,50 +121,6 @@ public class DocumentExecution {
     return rwInstance.getPDFData();
   }
   
-  public static RWBean saveEmbeddedImagesToFile(String documentID, WebIServerSession session, String pathToSaveImages) throws WebBeanException, WebObjectsException {
-	    //Usage: Saves the images embedded in the documentID to image file located in 'pathString'
-	  
-	    RWBean rwb = (RWBean)BeanFactory.getInstance().newBean("RWBean");
-	    // ID of the object we wish to execute
-	    rwb.setObjectID(documentID);
-	    // session used for execution
-	    rwb.setSessionInfo(session);
-	    
-	    //Create Document instance.
-	    WebObjectsFactory objectsFactory = WebObjectsFactory.getInstance();
-		RWInstance rwInstance = rwb.getRWInstance();        
-		//Show document's name.
-		System.out.println("Document Name: " + rwInstance.getDefinition().getName());
-		
-		//Retrieve document object definition to retrieve images.
-		RWDefinition rwDefinition = rwInstance.getDefinition();
-		
-		//Filter object by image type (EnumRWUnitTypes.RWUNIT_IMAGE)
-		RWUnitDef[] rwUnitDefs = rwDefinition.findUnitsByType(EnumRWUnitTypes.RWUNIT_IMAGE);
-
-		//Prints number of images.
-		System.out.println("Number o fimages in document: " + rwUnitDefs.length);
-		
-		//Just get the first image for demostration purposes. 
-		//TODO:
-		//   - Iterate rwUniDefs array to store all images in the document.
-		
-		RWImageDef imageBlobImpl = (RWImageDef)rwUnitDefs[0];
-		
-		//The value of pathString is the actula objectID in the medatada.
-		String pathString = imageBlobImpl.getPath();
-		
-		//Create blob object to store the image.
-		WebObjectSource objectSource = objectsFactory.getObjectSource();
-		WebBlob blob = (WebBlob)objectSource.getObject(pathString, EnumDSSXMLObjectTypes.DssXmlTypeBlob);
-		byte[] myImage = blob.getBlob();
-		
-		//Save image to file to 'pathToSaveImages' path.
-		FileHelper.saveByteArrayToFile(myImage, pathToSaveImages);
-			
-
-
-	  return rwb;
-  }
+ 
 
 }

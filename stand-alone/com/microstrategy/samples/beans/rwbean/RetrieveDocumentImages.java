@@ -1,5 +1,8 @@
 package com.microstrategy.samples.beans.rwbean;
 import java.util.ArrayList;
+
+import org.springframework.ui.context.Theme;
+
 import com.microstrategy.samples.sessions.SessionManager;
 import com.microstrategy.samples.util.FileHelper;
 import com.microstrategy.web.beans.BeanFactory;
@@ -70,9 +73,11 @@ public class RetrieveDocumentImages {
 		// Creating the ArrayList of WebBlog images objects.
 		WebObjectSource webObjectSource = objectsFactory.getObjectSource(); 
 		
-		// Images in MicroStrategy metadata are stored in WebBlob objects.
+		// Images in documents are actually metadata objects, stored as WebBlob types, containing the binary image data.
 		// https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/web/objects/WebBlob.html
 		// Looping through all the objects to compose the images ArrayList.
+		// The RWUnitDef containing the image does not directly expose the image binary data, but it has the object ID for the WebBlob, which can be used to retrieve this.
+		// Fetch the ID of the WebBlob, then fetch the WebBlob from the metadata using object ID, which now gives us access to the image binary data in a byte[]
 		ArrayList<WebBlob> imagesBlobs = new ArrayList<WebBlob>();
 		for (RWUnitDef rwUnitDef : rwUnitDefs) {
 			RWImageDef imageBlobImpl = (RWImageDef)rwUnitDef;

@@ -5,7 +5,6 @@ import com.microstrategy.samples.util.FileHelper;
 import com.microstrategy.web.beans.*;
 import com.microstrategy.web.objects.*;
 import com.microstrategy.web.objects.rw.*;
-import com.microstrategy.webapi.EnumDSSXMLObjectTypes;
 
 public class DocumentExecution {
 
@@ -120,7 +119,5 @@ public class DocumentExecution {
     rwInstance.pollStatus(); 
     return rwInstance.getPDFData();
   }
-  
- 
 
 }

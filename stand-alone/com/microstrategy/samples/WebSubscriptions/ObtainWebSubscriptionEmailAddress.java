@@ -1,4 +1,4 @@
-package com.microstrategy.samples.WebSubscriptions;
+package com.microstrategy.samples.websubscriptions;
 import com.microstrategy.samples.sessions.SessionManager;
 import com.microstrategy.web.objects.WebIServerSession;
 import com.microstrategy.web.objects.WebObjectSource;

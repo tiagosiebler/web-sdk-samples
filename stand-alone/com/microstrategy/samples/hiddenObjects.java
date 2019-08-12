@@ -20,7 +20,7 @@ Did not use object.populate() but search.getResults() instead. Chose to search f
 
 Find the code below, and ENJOY. */
 
-package com.edgar.standalone;
+package com.microstrategy.samples.searching;
 
 import com.microstrategy.web.objects.WebFolder;
 import com.microstrategy.web.objects.WebIServerSession;
@@ -33,54 +33,58 @@ import com.microstrategy.webapi.EnumDSSXMLObjectFlags;
 import com.microstrategy.webapi.EnumDSSXMLObjectTypes;
 import com.microstrategy.webapi.EnumDSSXMLSearchFlags;
 
-public class FirstClass {
+public class hiddenObjects {
 
-private static WebObjectsFactory factory = WebObjectsFactory.getInstance();	
-private static WebIServerSession serverSession = null;
+	private static WebObjectsFactory factory = WebObjectsFactory.getInstance();	
+	private static WebIServerSession serverSession = null;
 
-public static void main(String[] args) throws WebObjectsException{ 
+	public static void main(String[] args) throws WebObjectsException { 
 
-// Starting the session
+		// Starting the session
 
-System.out.println("Initiating the session.");
+		System.out.println("Initiating the session.");
 
-serverSession = factory.getIServerSession();
-serverSession.setServerName("SERVER"); 
-serverSession.setServerPort(0);
-serverSession.setProjectName("MicroStrategy Tutorial");
-serverSession.setLogin("Administrator"); 
-serverSession.setPassword(""); 
-serverSession.setApplicationType(EnumDSSXMLApplicationType.DssXmlApplicationCustomApp);
+		// Connectivity for the intelligence server
+	
+		String intelligenceServerName = "SERVER";
+		String projectName = "MicroStrategy Tutorial";
+		String microstrategyUsername = "Administrator";
+		String microstrategyPassword = "";
+    
+		// Create our I-Server Session
+		WebIServerSession serverSession = SessionManager.getSessionWithDetails(intelligenceServerName, projectName, microstrategyUsername, microstrategyPassword);
 
-System.out.println("Performing the search.");
+		System.out.println("Performing the search.");
 
-WebObjectSource source = serverSession.getFactory().getObjectSource();
-WebSearch search = source.getNewSearchObject();
+		WebObjectSource source = serverSession.getFactory().getObjectSource();
+		WebSearch search = source.getNewSearchObject();
 
-String folderGUID = "98FE182C2A10427EACE0CD30B6768258"; 
+		String folderGUID = "98FE182C2A10427EACE0CD30B6768258"; 
 
-search.setSearchRoot(folderGUID);
-search.setFlags(EnumDSSXMLSearchFlags.DssXmlSearchNameWildCard | EnumDSSXMLSearchFlags.DssXmlSearchRootRecursive | EnumDSSXMLObjectFlags.DssXmlObjectFindHidden);
-search.setAsync(false);
+		search.setSearchRoot(folderGUID);
+		search.setFlags(EnumDSSXMLSearchFlags.DssXmlSearchNameWildCard | EnumDSSXMLSearchFlags.DssXmlSearchRootRecursive | EnumDSSXMLObjectFlags.DssXmlObjectFindHidden);
+		search.setAsync(false);
 
-search.types().add(EnumDSSXMLObjectTypes.DssXmlTypeFolder);
-search.submit();	
+		search.types().add(EnumDSSXMLObjectTypes.DssXmlTypeFolder);
+		search.submit();	
 
-System.out.println("Search submitted.");
+		System.out.println("Search submitted.");
 
-WebFolder folderWithResults = search.getResults();
-System.out.println("Filtering the results.");
+		WebFolder folderWithResults = search.getResults();
+		System.out.println("Filtering the results.");
 
-int size = 0;
-size = folderWithResults.size();
+		int size = folderWithResults.size();
 
-System.out.println("All of the folders from within the search directory: ");
+		System.out.println("All of the folders from within the search directory: ");
 
-for (java.util.Enumeration e = folderWithResults.elements(); e.hasMoreElements();) {
-    System.out.println(e.nextElement());
-   }
+		// Getting a list of results into Enumeration
+		Enumeration<WebObjectInfo> results = folderWithResults.elements();
 
-System.out.println("Size of the folder is: " + size);
-
-	}
-}
+		// Iterating through each result, while results remain
+		while (results.hasMoreElements()) {
+			WebObjectInfo result = results.nextElement();
+			System.out.println(result.getName());
+			}
+		System.out.println("Size of the folder is: " + size);
+		}
+	}	

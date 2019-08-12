@@ -88,3 +88,4 @@ public class hiddenObjects {
 		System.out.println("Size of the folder is: " + size);
 		}
 	}	
+}

@@ -52,7 +52,7 @@ public class hiddenObjects {
 
   public static WebFolder searchForFoldersWithinFolder(WebIServerSession serverSession, String parentFolderObjectID) throws WebObjectsException {
     
-	System.out.println("Performing the search.");
+    System.out.println("Performing the search.");
     
     WebObjectSource source = serverSession.getFactory().getObjectSource();
     
@@ -80,7 +80,7 @@ public class hiddenObjects {
 
   public static void printSearchResults(WebFolder searchResults) {
     
-	System.out.println("This search found " + searchResults.size() + " results");
+    System.out.println("This search found " + searchResults.size() + " results");
 
     // Getting a list of results into Enumeration
     Enumeration<WebObjectInfo> results = searchResults.elements();

@@ -22,8 +22,12 @@ Find the code below, and ENJOY. */
 
 package com.microstrategy.samples.searching;
 
+import java.util.Enumeration;
+
+import com.microstrategy.samples.sessions.SessionManager;
 import com.microstrategy.web.objects.WebFolder;
 import com.microstrategy.web.objects.WebIServerSession;
+import com.microstrategy.web.objects.WebObjectInfo;
 import com.microstrategy.web.objects.WebObjectSource;
 import com.microstrategy.web.objects.WebObjectsException;
 import com.microstrategy.web.objects.WebObjectsFactory;
@@ -35,25 +39,34 @@ import com.microstrategy.webapi.EnumDSSXMLSearchFlags;
 
 public class hiddenObjects {
 
-	private static WebObjectsFactory factory = WebObjectsFactory.getInstance();	
-	private static WebIServerSession serverSession = null;
-
 	public static void main(String[] args) throws WebObjectsException { 
 
 		// Starting the session
+		WebIServerSession serverSession = startTheIServerSession();
+		
+		// Performing the search
+		performTheSearch(serverSession);
 
+	}
+	
+	public static WebIServerSession startTheIServerSession() {
+	    
 		System.out.println("Initiating the session.");
 
-		// Connectivity for the intelligence server
-	
+		// Connectivity details for the intelligence server
 		String intelligenceServerName = "SERVER";
 		String projectName = "MicroStrategy Tutorial";
 		String microstrategyUsername = "Administrator";
 		String microstrategyPassword = "";
     
-		// Create our I-Server Session
+		// Creating our I-Server Session
 		WebIServerSession serverSession = SessionManager.getSessionWithDetails(intelligenceServerName, projectName, microstrategyUsername, microstrategyPassword);
-
+		
+		return serverSession;
+	  }
+	
+	public static void performTheSearch(WebIServerSession serverSession) throws WebObjectsException {
+	    
 		System.out.println("Performing the search.");
 
 		WebObjectSource source = serverSession.getFactory().getObjectSource();
@@ -84,8 +97,10 @@ public class hiddenObjects {
 		while (results.hasMoreElements()) {
 			WebObjectInfo result = results.nextElement();
 			System.out.println(result.getName());
-			}
-		System.out.println("Size of the folder is: " + size);
 		}
-	}	
-}
+		
+		System.out.println("Size of the folder is: " + size);
+		
+	  }
+}	
+

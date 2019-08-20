@@ -121,8 +121,9 @@ public class DocumentSelectors {
     
     System.out.println("-> finished applying selector changes, executing dataset");
 
-    // request execution of the dataset again, since we've made dataset changes (via element selectors)
+    // Request messageId and execution status
     rwInstance.pollStatusOnly();
+    
     System.out.println("-> returning PDF export");
     
     // return the PDF export of the result

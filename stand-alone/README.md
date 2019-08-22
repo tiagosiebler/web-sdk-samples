@@ -4,6 +4,10 @@ These are samples demonstrating various ways to use different parts of the Micro
 
 Contributions via Pull Requests are very welcome.
 
+## Setup
+This `stand-alone` directory can be used directly within your IDE. The following IDE-specific guides are available:
+- [Eclipse](./setup_eclipse.md)
+
 ## Dependencies
 MicroStrategy dependencies are the jar libraries found in any MicroStrategy Web installation, in the following directory:
 > webapps/MicroStrategy/WEB-INF/lib/

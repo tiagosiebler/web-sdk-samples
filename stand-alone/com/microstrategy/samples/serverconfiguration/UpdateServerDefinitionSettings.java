@@ -57,7 +57,9 @@ public class UpdateServerDefinitionSettings {
 	public static WebServerDef getServerDefForCurrentSession(WebObjectSource woSource) throws WebObjectsException  {
 
 		String serverDefFolderID = woSource.getFolderID(EnumDSSXMLFolderNames.DssXmlFolderNameConfigureServerDefs);
-		WebFolder serverDefFolder = (WebFolder) woSource.getObject(serverDefFolderID, EnumDSSXMLObjectTypes.DssXmlTypeFolder, true);
+		
+		Boolean populateImmediately = true;
+		WebFolder serverDefFolder = (WebFolder) woSource.getObject(serverDefFolderID, EnumDSSXMLObjectTypes.DssXmlTypeFolder, populateImmediately);
 
 		//Displaying how many server definitions there are in the folder.
 		int serverDefsCount = serverDefFolder.getChildCount();

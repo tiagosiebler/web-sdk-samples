@@ -32,35 +32,47 @@ public class UpdateServerDefinitionSettings {
 		//https://lw.microstrategy.com/msdz/MSDL/GARelease_Current/docs/ReferenceFiles/reference/com/microstrategy/webapi/EnumDSSXMLServerSettingID.html
 		int serverSetting = EnumDSSXMLServerSettingID.DssXmlServerMaxWebConnectionIdleTime;
 
-		WebObjectsFactory factory = session.getFactory();
-		WebObjectSource woSource = factory.getObjectSource();
-
-
 		try {
-			//Server definitions are stored in a folder that can be accessed by its type.
-			String serverDefFolderID = woSource.getFolderID(EnumDSSXMLFolderNames.DssXmlFolderNameConfigureServerDefs);
-			WebFolder serverDefFolder = (WebFolder) woSource.getObject(serverDefFolderID, EnumDSSXMLObjectTypes.DssXmlTypeFolder, true);
-
-			//Displaying how many server definitions there are in the folder.
-			int serverDefsCount = serverDefFolder.getChildCount();
-			System.out.println("#Server defintions: " + serverDefsCount);
+			WebObjectsFactory factory = session.getFactory();
+			WebObjectSource woSource = factory.getObjectSource();
 			
-			//Retrieving 1st. the server definitions object.
-			WebServerDef serverDef = (WebServerDef) serverDefFolder.get(0);
-			serverDef.populate();
-			System.out.println("Server definition selected: " + serverDef.getName());
-
+			//Retrieving server definition.
+			WebServerDef serverDef = getServerDefForCurrentSession(woSource);
 			
 			//Setting new value for the setting.
 			SetNewServerSetting(serverDef, serverSetting, "600");
-
+			
 			//Important: need to save setting using the ObjectSource object.
-			woSource.save(serverDef);	
-
+			woSource.save(serverDef);
+			System.out.println("Setting changed.");
+				
 		} catch (WebObjectsException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	//Retrieve server definition from current session's ObjectSource.
+	public static WebServerDef getServerDefForCurrentSession(WebObjectSource woSource) throws WebObjectsException  {
+
+		String serverDefFolderID = woSource.getFolderID(EnumDSSXMLFolderNames.DssXmlFolderNameConfigureServerDefs);
+		WebFolder serverDefFolder = (WebFolder) woSource.getObject(serverDefFolderID, EnumDSSXMLObjectTypes.DssXmlTypeFolder, true);
+
+		//Displaying how many server definitions there are in the folder.
+		int serverDefsCount = serverDefFolder.getChildCount();
+		System.out.println("#Server defintions: " + serverDefsCount);
+		 
+		//Retrieving the 1st. server definitions object.
+		WebServerDef serverDef = (WebServerDef) serverDefFolder.get(0);
+		serverDef.populate();
+		System.out.println("Server definition selected: " + serverDef.getName());
+		
+		return serverDef;
+		
+	}
+	
+	
 	
 	//Set a new value (newValue) for the server setting identified by setting in the server definition identified by serverDef.
 	public static void SetNewServerSetting(WebServerDef serverDef, int setting,  String newValue) {

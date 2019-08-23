@@ -77,6 +77,13 @@ public class DocumentSelectors {
     
     System.out.println("-> Applying selections...");
     
+    boolean setAllElements = false;
+    if (setAllElements) {
+      System.out.println("Setting all elements in the selector, except the first (since that's 'all'");
+    } else {
+      System.out.println("Setting only the second element in the selector");
+    }
+    
     for (int i = 0; i < units.length; i++) {
       // get the current selector
       RWControlDef unit = (RWControlDef)units[i];
@@ -97,11 +104,8 @@ public class DocumentSelectors {
 
       // set the selector changes for this selector
       Vector listOfSelectionsForSelector = new Vector();
-      
-      boolean setAllElements = false;
-      
+            
       if (setAllElements) {
-        System.out.println("Setting all elements in the selector, except the first (since that's 'all'");
         // If desired, loop through individual attribute elements in this element selector
         for (int y = 1; y < selectorElements.size();y++) {
           RWGroupByElement currentElement = selectorElements.get(y);
@@ -112,7 +116,6 @@ public class DocumentSelectors {
           listOfSelectionsForSelector.add(element.getID()); 
         }
       } else {
-        System.out.println("Setting only the second element in the selector");
         RWGroupByElement secondElementInSelector = selectorElements.get(1);
         listOfSelectionsForSelector.add(secondElementInSelector.getID()); 
       }

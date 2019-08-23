@@ -79,9 +79,9 @@ public class DocumentSelectors {
     
     boolean setAllElements = false;
     if (setAllElements) {
-      System.out.println("Setting all elements in the selector, except the first (since that's 'all'");
+      System.out.println("-> Setting all elements");
     } else {
-      System.out.println("Setting only the second element in the selector");
+      System.out.println("-> Setting only 2nd element");
     }
     
     for (int i = 0; i < units.length; i++) {

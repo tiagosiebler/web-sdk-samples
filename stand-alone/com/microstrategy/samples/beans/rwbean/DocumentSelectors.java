@@ -1,5 +1,6 @@
 package com.microstrategy.samples.beans.rwbean;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -74,6 +75,8 @@ public class DocumentSelectors {
     // Fetch all selector-type objects from this document
     RWUnitDef[] units = rwd.findUnitsByType(EnumRWUnitTypes.RWUNIT_CONTROL);
     
+    System.out.println("-> Applying selections...");
+    
     for (int i = 0; i < units.length; i++) {
       // get the current selector
       RWControlDef unit = (RWControlDef)units[i];
@@ -81,8 +84,8 @@ public class DocumentSelectors {
       // name and key for current selector
       String selectorName = unit.getName();
       String selectorKey = unit.getKey();
-      System.out.println("selectorName: " + selectorName);
-      System.out.println("selectorKey: " + selectorKey);
+      //System.out.println("selectorName: " + selectorName);
+      //System.out.println("selectorKey: " + selectorKey);
       
       // Get the selector from the dataset
       List selectorsInDataset = data.findUnits(selectorKey);
@@ -90,33 +93,42 @@ public class DocumentSelectors {
       
       // Get a list of elements for this selector in the dataset
       RWGroupByElements selectorElements = selectorInDataset.getElements();
-      System.out.println("-> elements in selector: " + selectorElements.size());
+      //System.out.println("-> elements in selector: " + selectorElements.size());
 
-      // If desired, loop through individual attribute elements in this element selector
-//      for (int y = 0; y < selectorElements.size();y++) {
-//        RWGroupByElement currentElement = selectorElements.get(y);
-//        System.out.println("--> selectorElementName: " + currentElement.getDisplayName());
-//        System.out.println("--> selectorElement.isCurrent(): " + currentElement.isCurrent());
-//      }
+      // set the selector changes for this selector
+      Vector listOfSelectionsForSelector = new Vector();
       
-      // For simplicity, select the second element in each selector. 0 == first, 1 == second, etc.
-      RWGroupByElement secondElementInSelector = selectorElements.get(1);
+      boolean setAllElements = false;
       
-      // This is the ID referring to this element in the attribtue element selector, which we can use to make a selection
-      String idOfSelectorElement = secondElementInSelector.getID();
-      
-      System.out.println("--> current selector name: " + secondElementInSelector.getDisplayName());
-      System.out.println("--> id of second selector element: " + idOfSelectorElement);
-      
+      if (setAllElements) {
+        System.out.println("Setting all elements in the selector, except the first (since that's 'all'");
+        // If desired, loop through individual attribute elements in this element selector
+        for (int y = 1; y < selectorElements.size();y++) {
+          RWGroupByElement currentElement = selectorElements.get(y);
+          //System.out.println("--> selectorElementName: " + currentElement.getDisplayName());
+          //System.out.println("--> selectorElement.isCurrent(): " + currentElement.isCurrent());
+          
+          RWGroupByElement element = selectorElements.get(y);        
+          listOfSelectionsForSelector.add(element.getID()); 
+        }
+      } else {
+        System.out.println("Setting only the second element in the selector");
+        RWGroupByElement secondElementInSelector = selectorElements.get(1);
+        listOfSelectionsForSelector.add(secondElementInSelector.getID()); 
+      }
+
       // we want to queue our selections together before applying them in one bulk operation
       boolean applyChangesImmediately = false;
       
-      // set the selector changes for this selector
-      Vector listOfSelectionsForSelector = new Vector();
-      listOfSelectionsForSelector.add(idOfSelectorElement);      
-      
+      Date startDate = new Date();
       rwm.setCurrentControlElements(selectorKey, listOfSelectionsForSelector, applyChangesImmediately);
-      System.out.println("-----");
+      Date endDate = new Date();
+      
+      long diffMs = endDate.getTime() - startDate.getTime();
+      long diffSecs = diffMs / 1000 % 60;
+      long diffMins = diffMs / (60 * 1000) % 60;
+      
+      System.out.println("--> " + selectorName + " : " + listOfSelectionsForSelector.size() + "/" + selectorElements.size() + " elements changed : time taken ------> " + diffMins + ":" + diffSecs + "." + diffMs);
     }
     
     System.out.println("-> finished applying selector changes, executing dataset");

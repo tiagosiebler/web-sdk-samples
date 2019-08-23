@@ -137,7 +137,15 @@ public class DocumentSelectors {
     System.out.println("-> finished applying selector changes, executing dataset");
 
     // Request messageId and execution status
+    Date startDate = new Date();
     rwInstance.pollStatusOnly();
+    Date endDate = new Date();
+    
+    long diffMs = endDate.getTime() - startDate.getTime();
+    long diffSecs = diffMs / 1000 % 60;
+    long diffMins = diffMs / (60 * 1000) % 60;
+    
+    System.out.println("--> pollStatusOnly() : time taken ------> " + diffMins + ":" + diffSecs + "." + diffMs);
     
     System.out.println("-> returning PDF export");
     
